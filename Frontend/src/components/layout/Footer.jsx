@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { updateFavoriteSongs, logout } from "../../Redux/Slices/authslice";
@@ -10,10 +10,20 @@ import Features from "../player/Features";
 import "../../css/footer/Footer.css";
 
 const Footer = ({ player }) => {
+  const { user, token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const currentSong = player?.currentSong;
+
+  const isLiked = useMemo(() => {
+    if (!user || !user.favorites || !currentSong) return false;
+    const isFav = user.favorites.some((fav) => fav.id == currentSong.id);
+    return isFav;
+  }, [user, currentSong]);
+
   if (!player) return null;
 
   const {
-    currentSong,
     isPlaying,
     currentTime,
     duration,
@@ -36,16 +46,6 @@ const Footer = ({ player }) => {
     handleLoadedMetadata,
     handleEnded,
   } = player;
-
-  const { user, token } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-
-  const isLiked = React.useMemo(() => {
-    if (!user || !user.favorites || !currentSong) return false;
-    const isFav = user.favorites.some((fav) => fav.id == currentSong.id);
-    console.log("Checking isLiked:", { songId: currentSong.id, songName: currentSong.name, isFav, favorites: user.favorites });
-    return isFav;
-  }, [user, currentSong]);
 
   const handleLike = async () => {
     if (!user) {

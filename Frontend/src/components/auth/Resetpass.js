@@ -1,29 +1,30 @@
 import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../../css/auth/Resetpass.css";
-import "../../common/input.css";
+import "../../css/auth/Input.css"; // Fixed path based on file structure
 import Input from "../Common/input";
 
 const Resetpass = () => {
 
     const { token } = useParams();
     const navigate = useNavigate();
-    const [password, setpassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
-    const [status, setStatus] = useState("");
+    const [status, setStatus] = useState(""); // 'error' | 'success' | 'info' | ''
 
     const handleReset = async () => {
         if (!password || password.length < 6) {
             setStatus("error");
-            setMessage("Password must be atleast 6 Characters");
+            setMessage("Password must be at least 6 characters");
             return;
         }
 
         try {
             setLoading(true);
             setStatus("info");
-            setMessage("Reseting Password");
+            setMessage("Resetting Password...");
 
             await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/reset-password`, {
                 token,
@@ -31,18 +32,18 @@ const Resetpass = () => {
             });
 
             setStatus("success");
-            setMessage("Password reset successfully! You can now login");
+            setMessage("Password reset successfully! Redirecting to login...");
             setTimeout(() => navigate("/login"), 2000);
         } catch (error) {
             setStatus("error");
             setMessage(error?.response?.data?.message || "Failed to reset password");
-        } finally {
             setLoading(false);
         }
     }
+
     return (
         <div className="reset-wrapper">
-            <h3 className="Reset-title">Reset Password</h3>
+            <h3 className="reset-title">Reset Password</h3>
             <p className="reset-subtitle">Enter your new password to regain access to your account</p>
 
             <div className="reset-form">
@@ -50,18 +51,23 @@ const Resetpass = () => {
                     label="New Password"
                     type="password"
                     placeholder="Enter your new password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
 
-                {status === "error" && <div className="reset-error">{message}</div>}
-                {status === "success" && <div className="reset-success">{message}</div>}
+                {status && <div className={`reset-message ${status}`}>{message}</div>}
 
-                <button className="reset-submit-bttn" onclick={handleResetPassword} disabled={loading}><span>{loading ? "Resetting..." : "Reset Password"}</span></button>
+                <button
+                    className="reset-submit-bttn"
+                    onClick={handleReset}
+                    disabled={loading}
+                >
+                    {loading ? "Resetting..." : "Reset Password"}
+                </button>
             </div>
-
         </div>
     );
 };
+
 
 export default Resetpass;

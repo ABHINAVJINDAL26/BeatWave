@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { openAuthModal } from "../../Redux/Slices/uislices";
 
 import { IoIosSettings } from "react-icons/io";
-import logo from "../../assets/wsa-logo.jpg";
+import logo from "../../assets/freepik__a-minimalist-logo-for-music-app-beatwave-combining__57176.png";
 import "../../css/sidemenu/SideMenu.css";
 import { CiUser } from "react-icons/ci";
 import { AiOutlineHome, AiOutlineSearch, AiOutlineHeart } from "react-icons/ai";
@@ -28,7 +28,7 @@ const SideMenu = ({ setView, view }) => {
         {/* Logo */}
         <div className="sidemenu-header">
           <img src={logo} alt="wsa-logo" className="sidemenu-logo-img" />
-          <h2 className="sidemenu-logo-title">Synthesia</h2>
+          <h2 className="sidemenu-logo-title">BeatWave</h2>
         </div>
         {/* Navigation */}
         <nav className="sidemenu-nav" aria-label="Main navigation">
@@ -44,7 +44,13 @@ const SideMenu = ({ setView, view }) => {
             </li>
             <li>
               <button
-                onClick={() => setView("search")}
+                onClick={() => {
+                  if (!user) {
+                    dispatch(openAuthModal("login"));
+                  } else {
+                    setView("search");
+                  }
+                }}
                 className={getNavBtnClass("search")}
               >
                 <AiOutlineSearch className="sidemenu-nav-icon" size={18} />
@@ -54,7 +60,13 @@ const SideMenu = ({ setView, view }) => {
             <li>
               <button
                 className={getNavBtnClass("favourite")}
-                onClick={() => setView("favourite")}
+                onClick={() => {
+                  if (!user) {
+                    dispatch(openAuthModal("login"));
+                  } else {
+                    setView("favourite");
+                  }
+                }}
               >
                 <AiOutlineHeart size={18} />
                 <span>My Favourite</span>

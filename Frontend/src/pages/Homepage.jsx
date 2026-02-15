@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import Footer from "../components/layout/Footer";
 import SideMenu from "../components/layout/SideMenu";
@@ -92,7 +92,7 @@ const Homepage = () => {
   const [searchHistory, setSearchHistory] = useState([]);
 
   // Load history when user changes
-  React.useEffect(() => {
+  useEffect(() => {
     const userId = user?.id || user?._id;
     const historyKey = userId ? `searchHistory_${userId}` : "searchHistory_guest";
     const saved = localStorage.getItem(historyKey);
@@ -124,7 +124,7 @@ const Homepage = () => {
   };
 
   // Normalize favorites
-  const normalizedFavorites = React.useMemo(() => {
+  const normalizedFavorites = useMemo(() => {
     if (!user || !user.favorites) return [];
     return user.favorites.map(fav => ({
       id: fav.id,

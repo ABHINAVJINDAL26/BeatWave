@@ -15,26 +15,21 @@ const createToken = (id) => {
 };
 
 const signup = async (req, res) => {
-    console.log("Signup request received");
     try {
         const { name, email, password, avatar } = req.body;
-        console.log("Payload:", { name, email, hasPassword: !!password, hasAvatar: !!avatar });
 
         if (!name || !email || !password) {
-            console.log("Missing required fields");
             res.status(400).json({ message: "Name, emailID and password are required" });
             return;
         }
 
         const existingUser = await User.findOne({ email: email })
         if (existingUser) {
-            console.log("User already exists:", email);
             return res.status(400).json({ message: "User already exists" });
         }
 
         let avatarUrl = "";
         if (avatar) {
-            console.log("Uploading avatar...");
             try {
                 const uploadResponse = await imageKit.upload({
                     file: avatar,
@@ -42,21 +37,18 @@ const signup = async (req, res) => {
                     folder: "/mern-music-player",
                 });
                 avatarUrl = uploadResponse.url;
-                console.log("Avatar uploaded:", avatarUrl);
             } catch (uploadError) {
                 console.error("Avatar upload failed:", uploadError.message);
                 // Continue without avatar or handle error? For now continuing.
             }
         }
 
-        console.log("Creating user in DB...");
         const user = await User.create({
             name,
             email,
             password,
             avatar: avatarUrl,
         });
-        console.log("User created successfully:", user._id);
 
         const token = createToken(user._id);
 
