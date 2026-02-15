@@ -1,5 +1,5 @@
 import React from "react";
-import "../../css/Common/Modal.css";
+import "../../css/common/Modal.css";
 const Modal = ({ children, onclose }) => {
     return <div className="modal-backdrop"
         onClick={onclose}
